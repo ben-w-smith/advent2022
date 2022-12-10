@@ -1,8 +1,8 @@
 import * as fs from 'fs'
 import * as readline from 'readline'
 
-const dataFile = 'test.txt'
-// const dataFile = 'data.txt'
+// const dataFile = 'test.txt'
+const dataFile = 'data.txt'
 const stream = fs.createReadStream(new URL(dataFile, import.meta.url))
 const rl = readline.createInterface({
 	input: stream,
@@ -24,59 +24,72 @@ for await (const line of rl) {
 // if tree is greater than previous max then mark as visible
 
 const scenicScore = function (trees, x, y) {
+	if(x < 0 || x > trees.length) {
+		return false
+	}
+	if(y < 0 || y > trees[x].length) {
+		return false
+	}
+
 	const height = trees[x][y]
-	let i, j
+	let max = 0
 
-	// ltr
+	// [
+	// 	[0,0,0],
+	// 	[0,0,0],
+	// 	[0,0,0],
+	// ]
+
 	let ltr = 0
-	for (let i = x; i < trees.length; i++) {
-		let rowMax = -1
-		for (let j = y; j < trees[i].length; j++) {
-			if (trees[i][j] > rowMax) {
-				rowMax = trees[i][j]
-				ltr++
-			}
+	for(let i = x+1; i < trees.length; i++) {
+		ltr++
+		let curr = trees[i][y]
+		if(curr >= height) {
+			break;
 		}
 	}
 
-	// rtl
 	let rtl = 0
-	for (let i = x; i > -1; i--) {
-		let rowMax = -1
-		for (let j = y; j > -1; j--) {
-			if (trees[i][j] > rowMax) {
-				rowMax = trees[i][j]
-				rtl++
-			}
+	for(let i = x-1; i > -1; i--) {
+		rtl++
+		let curr = trees[i][y]
+		if(curr >= height) {
+			break;
 		}
 	}
 
-	// utd
 	let utd = 0
-	for (let i = y; i < trees.length; i++) {
-		let rowMax = -1
-		for (let j = x; j < trees[i].length; j++) {
-			if (trees[j][i] > rowMax) {
-				rowMax = trees[j][i]
-				utd++
-			}
+	for(let j = y+1; j < trees.length; j++) {
+		utd++
+		let curr = trees[x][j]
+		if(curr >= height) {
+			break;
 		}
 	}
 
-	// dtu
 	let dtu = 0
-	for (let i = y; i > -1; i--) {
-		let rowMax = -1
-		for (let j = x; j > -1; j--) {
-			if (trees[j][i] > rowMax) {
-				rowMax = trees[j][i]
-				dtu++
-			}
+	for(let j = y-1; j > -1; j--) {
+		dtu++
+		let curr = trees[x][j]
+		if(curr >= height) {
+			break;
 		}
 	}
 
+	let answer = [ltr, rtl, utd, dtu, ltr * rtl * utd * dtu]
 	return ltr * rtl * utd * dtu
 }
 
-const score = scenicScore(trees, 1, 2)
-console.log(score)
+let max = 0
+let coord = []
+for(let i = 1; i < trees.length - 1; i++) {
+	for(let j = 1; j < trees[i].length - 1; j++) {
+		let score = scenicScore(trees, i, j)
+		if(score > max) {
+			max = score
+			coord = [i, j]
+		}
+	}
+}
+
+			console.log(max)

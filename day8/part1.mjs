@@ -30,7 +30,7 @@ console.log(trees, visibleMap)
 for (let i = 0; i < trees.length; i++) {
 	let rowMax = -1
 	for (let j = 0; j < trees[i].length; j++) {
-		if (trees[i][j] > rowMax) {
+		if (trees[i][j] > rowMax || curr > height) {
 			rowMax = trees[i][j]
 			visibleMap[i][j] = 1
 		}
